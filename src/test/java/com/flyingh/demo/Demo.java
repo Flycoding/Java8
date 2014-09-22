@@ -27,6 +27,11 @@ public class Demo {
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test12() {
+		System.out.println(Arrays.asList(1, 2, 3, 5, 4, 6, 7, 8, 9, 10).stream().filter(e -> e > 3 && e % 2 == 0).map(e -> e * 2).findFirst().get());
+	}
+
+	@Test
 	public void test11() {
 		Arrays.asList(1, 2, 3, 4, 5).stream().map(e -> isPrime(e)).forEach(System.out::println);
 	}
