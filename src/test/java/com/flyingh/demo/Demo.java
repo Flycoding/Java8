@@ -17,6 +17,7 @@ import java.util.PriorityQueue;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.Test;
 
@@ -24,6 +25,15 @@ public class Demo {
 
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test11() {
+		Arrays.asList(1, 2, 3, 4, 5).stream().map(e -> isPrime(e)).forEach(System.out::println);
+	}
+
+	private boolean isPrime(int n) {
+		return n > 1 && IntStream.range(2, n).noneMatch(i -> n % i == 0);
+	}
 
 	@Test
 	public void test10() {
