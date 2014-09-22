@@ -27,6 +27,19 @@ public class Demo {
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test13() {
+		final List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		System.out.println(list.stream().reduce(0, (a, b) -> a + b));
+		System.out.println(list.stream().reduce(0, Math::addExact));
+		System.out.println(list.stream().reduce(0, Integer::sum));
+		System.out.println(list.stream().filter(e -> e % 2 == 0).reduce(0, Math::addExact));
+		System.out.println(list.stream().filter(e -> e % 2 != 0).reduce(0, Math::addExact));
+		System.out.println(list.stream().mapToInt(e -> e * 2).sum());
+		System.out.println(list.stream().mapToInt(e -> e).sum());
+		System.out.println(IntStream.range(1, 11).sum());
+	}
+
+	@Test
 	public void test12() {
 		System.out.println(Arrays.asList(1, 2, 3, 5, 4, 6, 7, 8, 9, 10).stream().filter(e -> e > 3 && e % 2 == 0).map(e -> e * 2).findFirst().get());
 	}
