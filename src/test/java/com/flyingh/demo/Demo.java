@@ -1,15 +1,82 @@
 package com.flyingh.demo;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
 public class Demo {
+
+	private static final String FILE_NAME = "dictionary.txt";
+	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test8() throws IOException {
+		final Map<String, List<String>> map = new HashMap<>();
+		try (final BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));) {
+			String str = null;
+			while ((str = br.readLine()) != null) {
+				final String orderedStr = order(str);
+				List<String> list = map.get(orderedStr);
+				if (list == null) {
+					map.put(orderedStr, list = new ArrayList<>());
+				}
+				list.add(str);
+			}
+		}
+		for (final Map.Entry<String, List<String>> me : map.entrySet()) {
+			final List<String> list = me.getValue();
+			if (list.size() >= MIN_REPEAT_NUMBER) {
+				System.out.println(list.size() + ":" + me.getKey() + "-->" + list);
+			}
+		}
+	}
+
+	private String order(String str) {
+		final char[] array = str.toCharArray();
+		Arrays.sort(array);
+		return new String(array);
+	}
+
+	@Test
+	public void test7() {
+		final Map<String, String> map = new HashMap<>();
+		map.put("A", "B");
+		map.put("B", "C");
+		map.put("C", null);
+		// map.keySet().removeAll(new HashSet<>(map.values()));
+		map.values().removeAll(Collections.singleton("C"));
+		System.out.println(map);
+	}
+
+	@Test
+	public void test6() {
+		Arrays.asList("张三", "李四", "王五", "赵六", "孙七", "钱八").stream().sorted(Collator.getInstance(Locale.CHINA)).forEach(System.out::println);
+	}
+
+	@Test
+	public void test5() {
+		final PriorityQueue<String> priorityQueue = new PriorityQueue<>(Arrays.asList("c", "a", "b"));
+		final ArrayList<String> list = new ArrayList<>();
+		System.out.println(priorityQueue);
+		while (!priorityQueue.isEmpty()) {
+			list.add(priorityQueue.remove());
+		}
+		list.forEach(System.out::print);
+	}
 
 	@Test
 	public void test4() {
