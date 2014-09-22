@@ -10,9 +10,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,29 @@ public class Demo {
 
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test10() {
+		final List<String> list = Arrays.asList(" a ", "    b", "c    ");
+		list.stream().map(String::trim).collect(Collectors.toList()).forEach(System.out::print);
+		System.out.printf("%n%s%n", list);
+		for (final ListIterator<String> iterator = list.listIterator(); iterator.hasNext();) {
+			iterator.set(iterator.next().trim());
+		}
+		list.forEach(System.out::print);
+	}
+
+	@Test
+	public void test9() {
+		final TreeSet<Object> treeSet = new TreeSet<>();
+		new TreeSet<>(treeSet);
+		final Map<String, String> map = new TreeMap<>();
+		map.put("1", "c");
+		map.put("2", "b");
+		map.put("3", "a");
+		System.out.println(map.values());
+		System.out.println(Arrays.toString(map.values().toArray()));
+	}
 
 	@Test
 	public void test8() throws IOException {
