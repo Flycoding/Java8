@@ -29,7 +29,22 @@ public class Demo {
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test18() {
+		final List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 5);
+		System.out.println(list.stream().anyMatch(x -> x > 3));
+		System.out.println(list.stream().mapToInt(x -> x).summaryStatistics());
+		list.stream().distinct().forEach(System.out::print);
+		System.out.println();
+		list.stream().limit(3).forEach(System.out::print);
+		System.out.println();
+		list.stream().skip(3).forEach(System.out::print);
+		System.out.println();
+		Arrays.asList(2, 4, 3, 5, 7, 1, 6).stream().sorted().forEach(System.out::print);
+	}
+
+	@Test
 	public void test17() {
+		System.out.println(Arrays.asList("cC", "Dd", "eE", "Aa", "BB").stream().collect(Collectors.toSet()));// [cC, Dd, eE, Aa, BB]
 		Arrays.asList(1, 2, 3, 4, 5).forEach(System.out::println);
 		System.out.println("************");
 		Arrays.stream(Arrays.asList(1, 2, 3, 4, 5).stream().toArray(Integer[]::new)).forEach(System.out::println);
@@ -38,13 +53,13 @@ public class Demo {
 	@Test
 	public void test16() throws IOException {
 		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10, (path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java"))
-				.forEach(path -> {
-					try {
-						Files.lines(path).forEach(System.out::println);
-					} catch (final Exception e) {
-						e.printStackTrace();
-					}
-				});
+		.forEach(path -> {
+			try {
+				Files.lines(path).forEach(System.out::println);
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Test
