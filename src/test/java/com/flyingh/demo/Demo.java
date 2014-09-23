@@ -3,6 +3,8 @@ package com.flyingh.demo;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +27,26 @@ public class Demo {
 
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test16() throws IOException {
+		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10, (path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java"))
+				.forEach(path -> {
+					try {
+						Files.lines(path).forEach(System.out::println);
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+				});
+	}
+
+	@Test
+	public void test15() throws IOException {
+		// Files.list(Paths.get("C:/Windows/System32")).forEach(System.out::println);
+		Files.list(FileSystems.getDefault().getPath(System.getProperty("user.dir"))).forEach(System.out::println);
+		System.out.println("******************************************************************");
+		Files.walk(FileSystems.getDefault().getPath(System.getProperty("user.dir"))).forEach(System.out::println);
+	}
 
 	@Test
 	public void test14() {
