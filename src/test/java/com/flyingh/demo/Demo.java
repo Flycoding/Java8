@@ -27,6 +27,13 @@ public class Demo {
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test14() {
+		System.out.println("ABCDE".length());
+		System.out.println("ABCDE".chars().count());
+		"ABCDE".chars().forEach(i -> System.out.println((char) i));
+	}
+
+	@Test
 	public void test13() {
 		final List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 		System.out.println(list.stream().reduce(0, (a, b) -> a + b));
