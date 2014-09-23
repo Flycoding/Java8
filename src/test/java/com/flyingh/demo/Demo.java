@@ -29,6 +29,13 @@ public class Demo {
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test17() {
+		Arrays.asList(1, 2, 3, 4, 5).forEach(System.out::println);
+		System.out.println("************");
+		Arrays.stream(Arrays.asList(1, 2, 3, 4, 5).stream().toArray(Integer[]::new)).forEach(System.out::println);
+	}
+
+	@Test
 	public void test16() throws IOException {
 		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10, (path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java"))
 				.forEach(path -> {
