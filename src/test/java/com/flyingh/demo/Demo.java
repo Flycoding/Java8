@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,35 @@ public class Demo {
 
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test20() {
+		final Integer[] intArray = { 1, 2, 3, 4, 5, 6, 7, 8 };
+		final List<Integer> listOfIntegers = new ArrayList<>(Arrays.asList(intArray));
+
+		System.out.println("listOfIntegers:");
+		listOfIntegers.stream().forEach(e -> System.out.print(e + " "));
+		System.out.println("");
+
+		System.out.println("listOfIntegers sorted in reverse order:");
+		final Comparator<Integer> normal = Integer::compare;
+		final Comparator<Integer> reversed = normal.reversed();
+		Collections.sort(listOfIntegers, reversed);
+		listOfIntegers.stream().forEach(e -> System.out.print(e + " "));
+		System.out.println("");
+
+		System.out.println("Parallel stream");
+		listOfIntegers.parallelStream().forEach(e -> System.out.print(e + " "));
+		System.out.println("");
+
+		System.out.println("Another parallel stream:");
+		listOfIntegers.parallelStream().forEach(e -> System.out.print(e + " "));
+		System.out.println("");
+
+		System.out.println("With forEachOrdered:");
+		listOfIntegers.parallelStream().forEachOrdered(e -> System.out.print(e + " "));
+		System.out.println("");
+	}
 
 	class MySet extends TreeSet<Integer> {
 		private static final long serialVersionUID = 2608547071947492231L;
@@ -57,6 +87,7 @@ public class Demo {
 		System.out.println(set);
 		final StringBuilder builder = Stream.of("a", "b", "c", "d", "e").collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
 		System.out.println(builder);
+		System.out.println(Stream.of("a", "b", "c", "d", "e", "f", "g").collect(Collectors.joining("#")));
 	}
 
 	@Test
@@ -84,13 +115,13 @@ public class Demo {
 	@Test
 	public void test16() throws IOException {
 		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10, (path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java"))
-				.forEach(path -> {
-					try {
-						Files.lines(path).forEach(System.out::println);
-					} catch (final Exception e) {
-						e.printStackTrace();
-					}
-				});
+		.forEach(path -> {
+			try {
+				Files.lines(path).forEach(System.out::println);
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Test
