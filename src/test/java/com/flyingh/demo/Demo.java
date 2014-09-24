@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,10 +17,12 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -27,6 +30,34 @@ public class Demo {
 
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	class MySet extends TreeSet<Integer> {
+		private static final long serialVersionUID = 2608547071947492231L;
+
+		{
+			System.out.println("here");
+		}
+
+		@Override
+		public boolean add(Integer e) {
+			System.out.println("add:" + e);
+			return super.add(e);
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends Integer> c) {
+			System.out.println("addAll:" + c);
+			return super.addAll(c);
+		}
+	}
+
+	@Test
+	public void test19() {
+		final Set<Integer> set = Arrays.asList(1, 3, 2, 5, 4, 8).stream().collect(MySet::new, MySet::add, MySet::addAll);
+		System.out.println(set);
+		final StringBuilder builder = Stream.of("a", "b", "c", "d", "e").collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
+		System.out.println(builder);
+	}
 
 	@Test
 	public void test18() {
@@ -53,13 +84,13 @@ public class Demo {
 	@Test
 	public void test16() throws IOException {
 		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10, (path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java"))
-		.forEach(path -> {
-			try {
-				Files.lines(path).forEach(System.out::println);
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-		});
+				.forEach(path -> {
+					try {
+						Files.lines(path).forEach(System.out::println);
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+				});
 	}
 
 	@Test
