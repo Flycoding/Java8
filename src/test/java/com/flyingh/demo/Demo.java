@@ -18,6 +18,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -33,12 +34,22 @@ public class Demo {
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test22() {
+		final Queue<Integer> queue = new PriorityQueue<>(Arrays.asList(3, 2, 4, 5, 1));
+		queue.forEach(System.out::println);
+		System.out.println("*********************");
+		while (!queue.isEmpty()) {
+			System.out.println(queue.poll());
+		}
+	}
+
+	@Test
 	public void test21() {
 		final List<Student> students = Arrays.<Student> asList(new Student(1, "B", Arrays.asList(new Book(1, "Java SE"), new Book(2, "C++"))),
 				new Student(2, "a", Arrays.asList(new Book(3, "C"))),
 				new Student(3, "C", Arrays.asList(new Book(4, "C#"), new Book(5, "Java EE"), new Book(6, "Android"))));
 		students.stream().filter(s -> s.getBooks().stream().anyMatch(b -> b.getName().contains("Java")))
-		.sorted(Comparator.comparing(Student::getName).reversed()).forEach(System.out::println);
+				.sorted(Comparator.comparing(Student::getName).reversed()).forEach(System.out::println);
 	}
 
 	@Test
@@ -125,12 +136,12 @@ public class Demo {
 	public void test16() throws IOException {
 		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10,
 				(path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java")).forEach(path -> {
-					try {
-						Files.lines(path).forEach(System.out::println);
-					} catch (final Exception e) {
-						e.printStackTrace();
-					}
-				});
+			try {
+				Files.lines(path).forEach(System.out::println);
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Test
