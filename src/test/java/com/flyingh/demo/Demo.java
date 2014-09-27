@@ -34,6 +34,16 @@ public class Demo {
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test24() {
+		final List<Integer> list = new ArrayList<>(Arrays.asList(1, 2, 4, 5));
+		final int index = Collections.binarySearch(list, 3);
+		if (index < 0) {
+			list.add(-index - 1, 3);
+		}
+		System.out.println(list);
+	}
+
+	@Test
 	public void test23() {
 		final Map<Integer, String> map = new HashMap<>();
 		map.put(1, "a");
