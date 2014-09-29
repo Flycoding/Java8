@@ -12,6 +12,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +45,74 @@ public class Demo {
 
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test36() {
+		final Path path = Paths.get("C:\\a\\b\\c");
+		Assert.assertTrue(path.startsWith("C:\\"));
+		Assert.assertTrue(path.startsWith(Paths.get("C:\\")));
+		Assert.assertTrue(path.endsWith("c"));
+		Assert.assertTrue(path.endsWith(Paths.get("c")));
+		Assert.assertNotEquals(path, Paths.get("C:\\a\\b\\c\\..\\c"));
+		Assert.assertEquals(path, Paths.get("C:\\a\\b\\c\\..\\c").normalize());
+		Assert.assertTrue(path.compareTo(Paths.get("C:\\a\\b\\c\\d")) < 0);
+	}
+
+	@Test
+	public void test35() {
+		final Path aPath = Paths.get("a");
+		final Path bPath = Paths.get("b");
+		System.out.println(aPath.relativize(bPath));
+		System.out.println(bPath.relativize(aPath));
+		final Path cPath = Paths.get("a\\b\\c");
+		System.out.println(aPath.relativize(cPath));
+		System.out.println(cPath.relativize(aPath));
+	}
+
+	@Test
+	public void test34() {
+		System.out.println(Paths.get("a").resolve("b"));
+		System.out.println(Paths.get("a").resolve("C:\\b"));
+	}
+
+	@Test
+	public void test33() {
+		final Path path = Paths.get("a");
+		System.out.println(path.getParent());
+		System.out.println(path.getRoot());
+		final Path absolutePath = path.toAbsolutePath();
+		System.out.println(absolutePath);
+		System.out.println(absolutePath.getParent());
+		System.out.println(absolutePath.getRoot());
+	}
+
+	@Test
+	public void test32() {
+		System.out.println(Paths.get("C:\\a\\.\\b\\c").normalize());
+		System.out.println(Paths.get("C:\\a\\..\\a\\b\\c").normalize());
+		System.out.println(Paths.get("C:\\a\\..\\a\\b\\c").toAbsolutePath());
+		System.out.println(Paths.get("C:\\a\\b\\c").toUri());
+	}
+
+	@Test
+	public void test31() {
+		final Path path = Paths.get("C:\\a\\b\\c");
+		System.out.println(path.toString());
+		System.out.println(path.getFileName());
+		System.out.println(path.getNameCount());
+		System.out.println(path.getName(0));
+		System.out.println(path.subpath(0, 2));
+		System.out.println(path.getParent());
+		System.out.println(path.getRoot());
+		System.out.println(Paths.get("d\\e").getRoot());
+	}
+
+	@Test
+	public void test30() {
+		final Path path = Paths.get(System.getProperty("user.home"), "logs", "foo.log").toAbsolutePath();
+		System.out.println(path);
+		path.forEach(System.out::println);
+	}
 
 	@Test
 	public void test29() throws IOException, ClassNotFoundException {
