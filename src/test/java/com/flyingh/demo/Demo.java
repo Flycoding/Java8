@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,6 +37,12 @@ public class Demo {
 
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test28() {
+		System.out.printf("%tB%n", Calendar.getInstance());
+		System.out.printf("%f,%1$+020.10f%n", Math.PI);
+	}
 
 	@Test
 	public void test27() throws FileNotFoundException {
@@ -103,7 +110,7 @@ public class Demo {
 				new Student(2, "a", Arrays.asList(new Book(3, "C"))),
 				new Student(3, "C", Arrays.asList(new Book(4, "C#"), new Book(5, "Java EE"), new Book(6, "Android"))));
 		students.stream().filter(s -> s.getBooks().stream().anyMatch(b -> b.getName().contains("Java")))
-		.sorted(Comparator.comparing(Student::getName).reversed()).forEach(System.out::println);
+				.sorted(Comparator.comparing(Student::getName).reversed()).forEach(System.out::println);
 	}
 
 	@Test
@@ -190,12 +197,12 @@ public class Demo {
 	public void test16() throws IOException {
 		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10,
 				(path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java")).forEach(path -> {
-					try {
-						Files.lines(path).forEach(System.out::println);
-					} catch (final Exception e) {
-						e.printStackTrace();
-					}
-				});
+			try {
+				Files.lines(path).forEach(System.out::println);
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Test
