@@ -1,8 +1,11 @@
 package com.flyingh.demo;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.text.Collator;
@@ -19,6 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -32,6 +36,36 @@ public class Demo {
 
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test27() throws FileNotFoundException {
+		int sum = 0;
+		try (Scanner scanner = new Scanner(new FileInputStream("scanner.txt"));) {
+			while (scanner.hasNext()) {
+				if (scanner.hasNextInt()) {
+					sum += scanner.nextInt();
+				} else {
+					scanner.next();
+				}
+			}
+		}
+		System.out.println(sum);
+	}
+
+	@Test
+	public void test26() {
+		System.out.println(Locale.getDefault());
+		try (Scanner scanner = new Scanner(System.in)) {
+			System.out.println(scanner.nextInt());// 12,345,678
+		}
+	}
+
+	@Test
+	public void test25() throws IOException {
+		try (OutputStreamWriter osw = new OutputStreamWriter(System.out);) {
+			osw.write(65);
+		}
+	}
 
 	@Test
 	public void test24() {
