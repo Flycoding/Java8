@@ -19,6 +19,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -66,6 +67,29 @@ public class Demo {
 	private static final String SCANNER_FILE = "scanner.txt";
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test48() throws IOException {
+		try (FileChannel fileChannel = FileChannel.open(Paths.get("info"), StandardOpenOption.READ, StandardOpenOption.WRITE)) {
+			final ByteBuffer byteBuffer = ByteBuffer.allocate((int) fileChannel.size());
+			while (byteBuffer.hasRemaining()) {
+				fileChannel.read(byteBuffer);
+			}
+			final ByteBuffer buffer = ByteBuffer.wrap("haha!!!".getBytes());
+			fileChannel.position(0);
+			while (buffer.hasRemaining()) {
+				fileChannel.write(buffer);
+			}
+			byteBuffer.rewind();
+			while (byteBuffer.hasRemaining()) {
+				fileChannel.write(byteBuffer);
+			}
+			buffer.flip();
+			while (buffer.hasRemaining()) {
+				fileChannel.write(buffer);
+			}
+		}
+	}
 
 	@Test
 	public void test47() throws IOException {
