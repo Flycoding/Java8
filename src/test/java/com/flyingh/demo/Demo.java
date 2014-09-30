@@ -75,6 +75,11 @@ public class Demo {
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test53() {
+		FileSystems.getDefault().supportedFileAttributeViews().forEach(System.out::println);
+	}
+
+	@Test
 	public void test52() {
 		final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{java,class}");
 		System.out.println(pathMatcher.matches(Paths.get("HelloWorld.java")));
