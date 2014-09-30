@@ -26,6 +26,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,6 +48,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,6 +72,41 @@ public class Demo {
 	private static final String SCANNER_FILE = "scanner.txt";
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test51() throws IOException {
+		Files.walk(Paths.get("C:\\Program Files"), Integer.MAX_VALUE, FileVisitOption.FOLLOW_LINKS).forEach(System.out::println);
+	}
+
+	@Test
+	public void test50() throws IOException {
+		Files.walkFileTree(Paths.get("C:\\"), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new FileVisitor<Path>() {
+
+			@Override
+			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+				System.out.println(dir + " begin");
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				System.out.println(file + "-->" + attrs.lastModifiedTime());
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+				System.err.println(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				System.out.println(dir + " end");
+				return FileVisitResult.CONTINUE;
+			}
+		});
+	}
 
 	@Test
 	public void test49() throws IOException {
@@ -134,8 +173,7 @@ public class Demo {
 			}
 		}
 		try {
-			try (SeekableByteChannel byteChannel = Files.newByteChannel(Paths.get("tmp"),
-					new HashSet<>(Arrays.asList(StandardOpenOption.CREATE, StandardOpenOption.APPEND)),
+			try (SeekableByteChannel byteChannel = Files.newByteChannel(Paths.get("tmp"), new HashSet<>(Arrays.asList(StandardOpenOption.CREATE, StandardOpenOption.APPEND)),
 					PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-rw----")))) {
 				byteChannel.write(ByteBuffer.wrap("hello world,hahaha!!!".getBytes()));
 			}
@@ -409,10 +447,9 @@ public class Demo {
 	@Test
 	public void test21() {
 		final List<Student> students = Arrays.<Student> asList(new Student(1, "B", Arrays.asList(new Book(1, "Java SE"), new Book(2, "C++"))),
-				new Student(2, "a", Arrays.asList(new Book(3, "C"))),
-				new Student(3, "C", Arrays.asList(new Book(4, "C#"), new Book(5, "Java EE"), new Book(6, "Android"))));
-		students.stream().filter(s -> s.getBooks().stream().anyMatch(b -> b.getName().contains("Java")))
-		.sorted(Comparator.comparing(Student::getName).reversed()).forEach(System.out::println);
+				new Student(2, "a", Arrays.asList(new Book(3, "C"))), new Student(3, "C", Arrays.asList(new Book(4, "C#"), new Book(5, "Java EE"), new Book(6, "Android"))));
+		students.stream().filter(s -> s.getBooks().stream().anyMatch(b -> b.getName().contains("Java"))).sorted(Comparator.comparing(Student::getName).reversed())
+		.forEach(System.out::println);
 	}
 
 	@Test
@@ -497,14 +534,14 @@ public class Demo {
 
 	@Test
 	public void test16() throws IOException {
-		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10,
-				(path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java")).forEach(path -> {
-					try {
-						Files.lines(path).forEach(System.out::println);
-					} catch (final Exception e) {
-						e.printStackTrace();
-					}
-				});
+		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10, (path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java"))
+		.forEach(path -> {
+			try {
+				Files.lines(path).forEach(System.out::println);
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Test
