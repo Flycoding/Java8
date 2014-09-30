@@ -6,22 +6,28 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributes;
 import java.nio.file.attribute.FileTime;
@@ -57,12 +63,78 @@ import org.junit.Test;
 
 public class Demo {
 
+	private static final String SCANNER_FILE = "scanner.txt";
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test47() throws IOException {
+		final Path path = Files.createFile(Paths.get("abc"));
+		System.out.println(path.toRealPath());
+		Files.delete(path);
+		final Path tmpPath = Files.createTempFile(null, ".apk");
+		System.out.println(tmpPath);
+	}
+
+	@Test
+	public void test46() throws IOException {
+		try (SeekableByteChannel byteChannel = Files.newByteChannel(Paths.get(SCANNER_FILE));) {
+			final ByteBuffer byteBuffer = ByteBuffer.allocate(10);
+			final String fileEncoding = System.getProperty("file.encoding");
+			while (byteChannel.read(byteBuffer) > 0) {
+				byteBuffer.rewind();
+				System.out.println(Charset.forName(fileEncoding).decode(byteBuffer));
+				byteBuffer.flip();
+			}
+		}
+		try {
+			try (SeekableByteChannel byteChannel = Files.newByteChannel(Paths.get("tmp"),
+					new HashSet<>(Arrays.asList(StandardOpenOption.CREATE, StandardOpenOption.APPEND)),
+					PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-rw----")))) {
+				byteChannel.write(ByteBuffer.wrap("hello world,hahaha!!!".getBytes()));
+			}
+		} catch (final Exception e) {
+			System.out.println(e.getClass().getName());
+			Stream.of(e.getSuppressed()).forEach(System.out::println);
+		}
+	}
+
+	@Test
+	public void test45() throws IOException {
+		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(SCANNER_FILE))))) {
+			String str;
+			while ((str = bufferedReader.readLine()) != null) {
+				System.out.println(str);
+			}
+		}
+		try (PrintWriter printWriter = new PrintWriter(Files.newOutputStream(Paths.get("tmp")))) {
+			printWriter.println("hello world");
+			printWriter.println("this is a test!");
+		}
+	}
+
+	@Test
+	public void test44() throws IOException {
+		try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(SCANNER_FILE), StandardCharsets.UTF_8)) {
+			String str;
+			while ((str = bufferedReader.readLine()) != null) {
+				System.out.println(str);
+			}
+		}
+		try (BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get("tmp"), StandardCharsets.UTF_8)) {
+			bufferedWriter.write("hello world,this is a demo!");
+		}
+	}
+
+	@Test
+	public void test43() throws IOException {
+		Files.write(Paths.get("1.txt"), Files.readAllBytes(Paths.get(SCANNER_FILE)), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+		Files.write(Paths.get("2.txt"), Files.readAllLines(Paths.get(SCANNER_FILE)));
+	}
+
+	@Test
 	public void test42() throws IOException {
-		final FileStore fileStore = Files.getFileStore(Paths.get("scanner.txt"));
+		final FileStore fileStore = Files.getFileStore(Paths.get(SCANNER_FILE));
 		System.out.println(fileStore.getTotalSpace());
 		System.out.println(fileStore.getTotalSpace() - fileStore.getUnallocatedSpace());
 		System.out.println(fileStore.getUsableSpace());
@@ -71,7 +143,7 @@ public class Demo {
 
 	@Test
 	public void test41() throws IOException {
-		final Path path = Paths.get("scanner.txt");
+		final Path path = Paths.get(SCANNER_FILE);
 		final UserDefinedFileAttributeView attributeView = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
 		final String name = "text.info";
 		attributeView.write(name, Charset.defaultCharset().encode("hello world!!!"));
@@ -84,8 +156,8 @@ public class Demo {
 	@Test
 	public void test40() throws IOException {
 		try {
-			Files.setPosixFilePermissions(Paths.get("scanner.txt"), PosixFilePermissions.fromString("rm-------"));
-			final PosixFileAttributes attributes = Files.readAttributes(Paths.get("scanner.txt"), PosixFileAttributes.class);
+			Files.setPosixFilePermissions(Paths.get(SCANNER_FILE), PosixFilePermissions.fromString("rm-------"));
+			final PosixFileAttributes attributes = Files.readAttributes(Paths.get(SCANNER_FILE), PosixFileAttributes.class);
 			System.out.println(attributes.owner().getName());
 			System.out.println(attributes.group().getName());
 			final Set<PosixFilePermission> permissions = attributes.permissions();
@@ -100,7 +172,7 @@ public class Demo {
 
 	@Test
 	public void test39() throws IOException {
-		final Path path = Paths.get("scanner.txt");
+		final Path path = Paths.get(SCANNER_FILE);
 		DosFileAttributes attributes = Files.readAttributes(path, DosFileAttributes.class);
 		System.out.println(attributes.isArchive());
 		System.out.println(attributes.isReadOnly());
@@ -114,7 +186,7 @@ public class Demo {
 
 	@Test
 	public void test38() throws IOException {
-		final Path path = Paths.get("scanner.txt");
+		final Path path = Paths.get(SCANNER_FILE);
 		BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
 		System.out.println(attributes.creationTime());
 		System.out.println(attributes.lastAccessTime());
@@ -132,12 +204,12 @@ public class Demo {
 
 	@Test
 	public void test37() throws IOException {
-		assertTrue(Files.exists(Paths.get("scanner.txt")));
+		assertTrue(Files.exists(Paths.get(SCANNER_FILE)));
 		assertTrue(Files.notExists(Paths.get("abc")));
-		assertTrue(Files.isExecutable(Paths.get("scanner.txt")));
-		assertTrue(Files.isReadable(Paths.get("scanner.txt")));
-		assertTrue(Files.isWritable(Paths.get("scanner.txt")));
-		assertTrue(Files.isSameFile(Paths.get("scanner.txt"), Paths.get(".\\scanner.txt")));
+		assertTrue(Files.isExecutable(Paths.get(SCANNER_FILE)));
+		assertTrue(Files.isReadable(Paths.get(SCANNER_FILE)));
+		assertTrue(Files.isWritable(Paths.get(SCANNER_FILE)));
+		assertTrue(Files.isSameFile(Paths.get(SCANNER_FILE), Paths.get(".\\scanner.txt")));
 	}
 
 	@Test
@@ -231,7 +303,7 @@ public class Demo {
 	@Test
 	public void test27() throws FileNotFoundException {
 		int sum = 0;
-		try (Scanner scanner = new Scanner(new FileInputStream("scanner.txt"));) {
+		try (Scanner scanner = new Scanner(new FileInputStream(SCANNER_FILE));) {
 			while (scanner.hasNext()) {
 				if (scanner.hasNextInt()) {
 					sum += scanner.nextInt();
@@ -294,7 +366,7 @@ public class Demo {
 				new Student(2, "a", Arrays.asList(new Book(3, "C"))),
 				new Student(3, "C", Arrays.asList(new Book(4, "C#"), new Book(5, "Java EE"), new Book(6, "Android"))));
 		students.stream().filter(s -> s.getBooks().stream().anyMatch(b -> b.getName().contains("Java")))
-		.sorted(Comparator.comparing(Student::getName).reversed()).forEach(System.out::println);
+				.sorted(Comparator.comparing(Student::getName).reversed()).forEach(System.out::println);
 	}
 
 	@Test
@@ -381,12 +453,12 @@ public class Demo {
 	public void test16() throws IOException {
 		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10,
 				(path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java")).forEach(path -> {
-					try {
-						Files.lines(path).forEach(System.out::println);
-					} catch (final Exception e) {
-						e.printStackTrace();
-					}
-				});
+			try {
+				Files.lines(path).forEach(System.out::println);
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Test
