@@ -23,6 +23,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -67,6 +68,27 @@ public class Demo {
 	private static final String SCANNER_FILE = "scanner.txt";
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test49() throws IOException {
+		FileSystems.getDefault().getRootDirectories().forEach(System.out::println);
+		Files.createDirectory(Paths.get("a"));
+		Files.createDirectories(Paths.get("a\\b\\c"));
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("C:\\"))) {
+			directoryStream.forEach(System.out::println);
+		}
+		System.out.println("*************");
+		try (final DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("."), "*.{txt,class,xml}*")) {
+			directoryStream.forEach(path -> {
+				System.out.println(path.normalize());
+			});
+		}
+		System.out.println("#############");
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")),
+				path -> Files.isDirectory(path) || path.endsWith("pom.xml"))) {
+			directoryStream.forEach(System.out::println);
+		}
+	}
 
 	@Test
 	public void test48() throws IOException {
@@ -390,7 +412,7 @@ public class Demo {
 				new Student(2, "a", Arrays.asList(new Book(3, "C"))),
 				new Student(3, "C", Arrays.asList(new Book(4, "C#"), new Book(5, "Java EE"), new Book(6, "Android"))));
 		students.stream().filter(s -> s.getBooks().stream().anyMatch(b -> b.getName().contains("Java")))
-				.sorted(Comparator.comparing(Student::getName).reversed()).forEach(System.out::println);
+		.sorted(Comparator.comparing(Student::getName).reversed()).forEach(System.out::println);
 	}
 
 	@Test
@@ -477,12 +499,12 @@ public class Demo {
 	public void test16() throws IOException {
 		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10,
 				(path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java")).forEach(path -> {
-			try {
-				Files.lines(path).forEach(System.out::println);
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-		});
+					try {
+						Files.lines(path).forEach(System.out::println);
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+				});
 	}
 
 	@Test
