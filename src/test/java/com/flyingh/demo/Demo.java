@@ -1,5 +1,10 @@
 package com.flyingh.demo;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,10 +15,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.DosFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +53,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 public class Demo {
@@ -47,15 +61,95 @@ public class Demo {
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test42() throws IOException {
+		final FileStore fileStore = Files.getFileStore(Paths.get("scanner.txt"));
+		System.out.println(fileStore.getTotalSpace());
+		System.out.println(fileStore.getTotalSpace() - fileStore.getUnallocatedSpace());
+		System.out.println(fileStore.getUsableSpace());
+		System.out.println(fileStore.getUnallocatedSpace());
+	}
+
+	@Test
+	public void test41() throws IOException {
+		final Path path = Paths.get("scanner.txt");
+		final UserDefinedFileAttributeView attributeView = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+		final String name = "text.info";
+		attributeView.write(name, Charset.defaultCharset().encode("hello world!!!"));
+		final ByteBuffer byteBuffer = ByteBuffer.allocate(attributeView.size(name));
+		attributeView.read(name, byteBuffer);
+		byteBuffer.flip();
+		System.out.println(Charset.defaultCharset().decode(byteBuffer).toString());
+	}
+
+	@Test
+	public void test40() throws IOException {
+		try {
+			Files.setPosixFilePermissions(Paths.get("scanner.txt"), PosixFilePermissions.fromString("rm-------"));
+			final PosixFileAttributes attributes = Files.readAttributes(Paths.get("scanner.txt"), PosixFileAttributes.class);
+			System.out.println(attributes.owner().getName());
+			System.out.println(attributes.group().getName());
+			final Set<PosixFilePermission> permissions = attributes.permissions();
+			System.out.println(permissions);
+			Files.createFile(Paths.get("abc"), PosixFilePermissions.asFileAttribute(permissions));
+		} catch (final UnsupportedOperationException e) {
+			System.out.println(e.getClass().getName());
+		} catch (final Exception e) {
+			System.out.println(e.getClass().getName());
+		}
+	}
+
+	@Test
+	public void test39() throws IOException {
+		final Path path = Paths.get("scanner.txt");
+		DosFileAttributes attributes = Files.readAttributes(path, DosFileAttributes.class);
+		System.out.println(attributes.isArchive());
+		System.out.println(attributes.isReadOnly());
+		System.out.println(attributes.isHidden());
+		System.out.println(attributes.isSystem());
+		Files.setAttribute(path, "dos:hidden", true);
+		attributes = Files.readAttributes(path, DosFileAttributes.class);
+		System.out.println(attributes.isHidden());
+		Files.setAttribute(Paths.get("C:\\Users\\Administrator\\Desktop\\delall.bat"), "dos:hidden", false);
+	}
+
+	@Test
+	public void test38() throws IOException {
+		final Path path = Paths.get("scanner.txt");
+		BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
+		System.out.println(attributes.creationTime());
+		System.out.println(attributes.lastAccessTime());
+		System.out.println(attributes.lastModifiedTime());
+		System.out.println(attributes.isDirectory());
+		System.out.println(attributes.isRegularFile());
+		System.out.println(attributes.isSymbolicLink());
+		System.out.println(attributes.isOther());
+		System.out.println(attributes.size());
+		System.out.println(attributes.fileKey());
+		Files.setLastModifiedTime(path, FileTime.fromMillis(System.currentTimeMillis()));
+		attributes = Files.readAttributes(path, BasicFileAttributes.class);
+		System.out.println(attributes.lastModifiedTime());
+	}
+
+	@Test
+	public void test37() throws IOException {
+		assertTrue(Files.exists(Paths.get("scanner.txt")));
+		assertTrue(Files.notExists(Paths.get("abc")));
+		assertTrue(Files.isExecutable(Paths.get("scanner.txt")));
+		assertTrue(Files.isReadable(Paths.get("scanner.txt")));
+		assertTrue(Files.isWritable(Paths.get("scanner.txt")));
+		assertTrue(Files.isSameFile(Paths.get("scanner.txt"), Paths.get(".\\scanner.txt")));
+	}
+
+	@Test
 	public void test36() {
 		final Path path = Paths.get("C:\\a\\b\\c");
-		Assert.assertTrue(path.startsWith("C:\\"));
-		Assert.assertTrue(path.startsWith(Paths.get("C:\\")));
-		Assert.assertTrue(path.endsWith("c"));
-		Assert.assertTrue(path.endsWith(Paths.get("c")));
-		Assert.assertNotEquals(path, Paths.get("C:\\a\\b\\c\\..\\c"));
-		Assert.assertEquals(path, Paths.get("C:\\a\\b\\c\\..\\c").normalize());
-		Assert.assertTrue(path.compareTo(Paths.get("C:\\a\\b\\c\\d")) < 0);
+		assertTrue(path.startsWith("C:\\"));
+		assertTrue(path.startsWith(Paths.get("C:\\")));
+		assertTrue(path.endsWith("c"));
+		assertTrue(path.endsWith(Paths.get("c")));
+		assertNotEquals(path, Paths.get("C:\\a\\b\\c\\..\\c"));
+		assertEquals(path, Paths.get("C:\\a\\b\\c\\..\\c").normalize());
+		assertTrue(path.compareTo(Paths.get("C:\\a\\b\\c\\d")) < 0);
 	}
 
 	@Test
@@ -123,7 +217,7 @@ public class Demo {
 			try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray()); ObjectInputStream ois = new ObjectInputStream(bais)) {
 				final Object o1 = ois.readObject();
 				final Object o2 = ois.readObject();
-				Assert.assertSame(o1, o2);
+				assertSame(o1, o2);
 			}
 		}
 	}
