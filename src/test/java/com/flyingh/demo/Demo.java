@@ -31,6 +31,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -72,6 +73,15 @@ public class Demo {
 	private static final String SCANNER_FILE = "scanner.txt";
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test52() {
+		final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:*.{java,class}");
+		System.out.println(pathMatcher.matches(Paths.get("HelloWorld.java")));
+		System.out.println(pathMatcher.matches(Paths.get("HelloWorld.jar")));
+		System.out.println(pathMatcher.matches(Paths.get("HelloWorld.class")));
+		System.out.println(pathMatcher.matches(Paths.get("HelloWorld.html")));
+	}
 
 	@Test
 	public void test51() throws IOException {
@@ -449,7 +459,7 @@ public class Demo {
 		final List<Student> students = Arrays.<Student> asList(new Student(1, "B", Arrays.asList(new Book(1, "Java SE"), new Book(2, "C++"))),
 				new Student(2, "a", Arrays.asList(new Book(3, "C"))), new Student(3, "C", Arrays.asList(new Book(4, "C#"), new Book(5, "Java EE"), new Book(6, "Android"))));
 		students.stream().filter(s -> s.getBooks().stream().anyMatch(b -> b.getName().contains("Java"))).sorted(Comparator.comparing(Student::getName).reversed())
-		.forEach(System.out::println);
+				.forEach(System.out::println);
 	}
 
 	@Test
@@ -535,13 +545,13 @@ public class Demo {
 	@Test
 	public void test16() throws IOException {
 		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10, (path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java"))
-		.forEach(path -> {
-			try {
-				Files.lines(path).forEach(System.out::println);
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-		});
+				.forEach(path -> {
+					try {
+						Files.lines(path).forEach(System.out::println);
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+				});
 	}
 
 	@Test
