@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,6 +19,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
@@ -73,6 +75,35 @@ public class Demo {
 	private static final String SCANNER_FILE = "scanner.txt";
 	private static final String FILE_NAME = "dictionary.txt";
 	private static final int MIN_REPEAT_NUMBER = 8;
+
+	@Test
+	public void test57() {
+		final byte[] array = ByteBuffer.allocate(4).putInt(5).array();
+		System.out.println(Arrays.toString(array));
+		System.out.println(new BigInteger(1, array).intValue());
+	}
+
+	@Test
+	public void test56() throws IOException {
+		FileSystems.getDefault().getFileStores().forEach(System.out::println);
+		System.out.println("########################");
+		FileSystems.getDefault().getRootDirectories().forEach(System.out::println);
+		System.out.println("*********************");
+		System.out.println(Files.getFileStore(Paths.get("C:\\Windows")));
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		Stream.of(File.listRoots()).forEach(System.out::println);
+	}
+
+	@Test
+	public void test55() {
+		System.out.println(File.separator);
+		System.out.println(FileSystems.getDefault().getSeparator());
+	}
+
+	@Test
+	public void test54() throws IOException {
+		System.out.println(Files.probeContentType(Paths.get("Hello.mp3")));
+	}
 
 	@Test
 	public void test53() {
