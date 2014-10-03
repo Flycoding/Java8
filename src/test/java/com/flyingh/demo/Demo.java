@@ -77,6 +77,11 @@ public class Demo {
 	private static final int MIN_REPEAT_NUMBER = 8;
 
 	@Test
+	public void test58() {
+		new ProcessBuilder().environment().forEach((k, v) -> System.out.println(k + "--->" + v));
+	}
+
+	@Test
 	public void test57() {
 		final byte[] array = ByteBuffer.allocate(4).putInt(5).array();
 		System.out.println(Arrays.toString(array));
@@ -495,7 +500,7 @@ public class Demo {
 		final List<Student> students = Arrays.<Student> asList(new Student(1, "B", Arrays.asList(new Book(1, "Java SE"), new Book(2, "C++"))),
 				new Student(2, "a", Arrays.asList(new Book(3, "C"))), new Student(3, "C", Arrays.asList(new Book(4, "C#"), new Book(5, "Java EE"), new Book(6, "Android"))));
 		students.stream().filter(s -> s.getBooks().stream().anyMatch(b -> b.getName().contains("Java"))).sorted(Comparator.comparing(Student::getName).reversed())
-				.forEach(System.out::println);
+		.forEach(System.out::println);
 	}
 
 	@Test
@@ -581,13 +586,13 @@ public class Demo {
 	@Test
 	public void test16() throws IOException {
 		Files.find(FileSystems.getDefault().getPath(System.getProperty("user.dir")), 10, (path, attribute) -> path.endsWith(Demo.class.getName().replace('.', '/') + ".java"))
-				.forEach(path -> {
-					try {
-						Files.lines(path).forEach(System.out::println);
-					} catch (final Exception e) {
-						e.printStackTrace();
-					}
-				});
+		.forEach(path -> {
+			try {
+				Files.lines(path).forEach(System.out::println);
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Test
