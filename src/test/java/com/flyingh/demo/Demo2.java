@@ -3,11 +3,17 @@ package com.flyingh.demo;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
 public class Demo2 {
+	@Test
+	public void test8() {
+		System.out.println(ThreadLocalRandom.current().nextInt(-99, 100));
+	}
+
 	@Test
 	public void test7() {
 		final Flag flag = new Flag();
