@@ -8,6 +8,32 @@ import org.junit.Test;
 public class RegExDemo {
 
 	@Test
+	public void test6() {
+		System.out.println(separateThousands("-1234567890.1234567890"));
+	}
+
+	private String separateThousands(String s) {
+		return s.replaceAll("(?<=\\G\\d{3})(?=\\d)" + "|" + "(?<=^-?\\d{1,3})(?=(?:\\d{3})+(?!\\d))", ",");
+	}
+
+	@Test
+	public void test5() {
+		final String string = "abcdefghijklmnopqrstuvwxyz";
+		final String[] strs = string.split("(?<=\\G.{6})");
+		for (final String str : strs) {
+			System.out.println(str);
+		}
+	}
+
+	@Test
+	public void test4() {
+		final Matcher matcher = Pattern.compile("\\Gdog").matcher("dog dog");
+		while (matcher.find()) {
+			System.out.format("%s-->start:%d,end:%d%n", matcher.group(), matcher.start(), matcher.end());
+		}
+	}
+
+	@Test
 	public void test3() {
 		final Matcher matcher = Pattern.compile("(a(b)(c(d)))").matcher("abcd");
 		System.out.println(matcher.matches());
