@@ -9,6 +9,19 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 public class Demo2 {
+
+	@Test
+	public void test9() {
+		System.out.println(System.getProperty("user.dir"));
+		System.out.println(System.getProperty("user.name"));
+		System.out.println(System.getProperty("user.home"));
+		System.out.println("##########################################");
+		System.out.println(System.getenv("JAVA_HOME"));
+		System.out.println(System.getenv("Path"));
+		System.out.println("******************************************");
+		System.getenv().forEach((k, v) -> System.out.println(k + "=" + v));
+	}
+
 	@Test
 	public void test8() {
 		System.out.println(ThreadLocalRandom.current().nextInt(-99, 100));
