@@ -8,6 +8,17 @@ import org.junit.Test;
 public class RegExDemo {
 
 	@Test
+	public void test3() {
+		final Matcher matcher = Pattern.compile("(a(b)(c(d)))").matcher("abcd");
+		System.out.println(matcher.matches());
+		System.out.println(matcher.groupCount());
+		System.out.println(matcher.start(3));
+		System.out.println(matcher.end(3));
+		System.out.println(matcher.group(3));
+		System.out.println(matcher.group(2));
+	}
+
+	@Test
 	public void test2() {
 		System.out.println("2".matches("[0-3&&[^3]]"));
 	}
