@@ -1,11 +1,29 @@
 package com.flyingh.demo;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
 
 public class RegExDemo {
+
+	@Test
+	public void test7() {
+		assertFalse(Pattern.compile("a\u030A").matcher("\u00E5").matches());
+		assertTrue(Pattern.compile("a\u030A", Pattern.CANON_EQ).matcher("\u00E5").matches());
+		assertFalse(Pattern.compile("a").matcher("A").matches());
+		assertTrue(Pattern.compile("a", Pattern.CASE_INSENSITIVE).matcher("A").matches());
+		assertTrue(Pattern.compile("(?i)a").matcher("A").matches());
+		assertFalse(Pattern.compile("a ").matcher("a").matches());
+		assertTrue(Pattern.compile("a # this is the comments.", Pattern.COMMENTS).matcher("a").matches());
+		assertTrue(Pattern.compile("(?x)a # this is the comments.").matcher("a").matches());
+
+		System.out.println(Pattern.matches("(?x)a # this is the comments.", "a"));
+		System.out.println("a".substring(0, 0) + "haha");
+	}
 
 	@Test
 	public void test6() {
