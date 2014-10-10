@@ -11,6 +11,35 @@ import org.junit.Test;
 public class RegExDemo {
 
 	@Test
+	public void test10() {
+		final String regex = "a*b";
+		final String str = "aabfooaabfooabfoobfoo";
+		System.out.println(str.replaceAll(regex, "*"));
+		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		final Matcher matcher = Pattern.compile(regex).matcher(str);
+		final StringBuffer sb = new StringBuffer();
+		while (matcher.find()) {
+			matcher.appendReplacement(sb, "#");
+		}
+		matcher.appendTail(sb);
+		System.out.println(sb);
+	}
+
+	@Test
+	public void test9() {
+		assertTrue(Pattern.compile("foo").matcher("fooooooooooooooo").lookingAt());
+		assertFalse(Pattern.compile("foo").matcher("fooooooooooooooo").matches());
+	}
+
+	@Test
+	public void test8() {
+		System.out.println("a".replaceAll("[a-zA-Z]", "\\\\"));
+		System.out.println("a".replaceAll("[a-zA-Z]", Matcher.quoteReplacement("\\")));
+		System.out.println("500".replaceAll("(\\d+)", "\\$$1"));
+		System.out.println("500".replaceAll("(\\d+)", Matcher.quoteReplacement("$") + "$1"));
+	}
+
+	@Test
 	public void test7() {
 		assertFalse(Pattern.compile("a\u030A").matcher("\u00E5").matches());
 		assertTrue(Pattern.compile("a\u030A", Pattern.CANON_EQ).matcher("\u00E5").matches());
