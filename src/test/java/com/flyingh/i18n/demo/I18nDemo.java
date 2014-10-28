@@ -2,6 +2,7 @@ package com.flyingh.i18n.demo;
 
 import java.text.DateFormat;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.Locale;
 import java.util.Locale.LanguageRange;
 import java.util.stream.Collectors;
@@ -10,6 +11,18 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 public class I18nDemo {
+
+	@Test
+	public void test6() throws Exception {
+		System.out.println(Currency.getInstance(new Locale.Builder().setLanguage("en").setRegion("US").build()).getSymbol());
+		System.out.println(Currency.getInstance(Locale.US).getSymbol());
+		final Currency currency = Currency.getInstance(Locale.CHINA);
+		System.out.println(currency.getDisplayName());
+		System.out.println(currency.getDisplayName(Locale.US));
+		System.out.println(currency.getSymbol());
+		System.out.println(currency.getSymbol(Locale.CHINA));
+		System.out.println(Currency.getInstance(Locale.JAPAN).getSymbol(Locale.JAPAN));
+	}
 
 	@Test
 	public void test5() throws Exception {
