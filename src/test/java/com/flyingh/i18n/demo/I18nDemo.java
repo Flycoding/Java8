@@ -6,6 +6,8 @@ import java.text.DateFormatSymbols;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.RuleBasedCollator;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Currency;
@@ -20,6 +22,55 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 public class I18nDemo {
+
+	@Test
+	public void test16() {
+		final String str = "a";
+		System.out.println(str == str.substring(0));
+	}
+
+	@Test
+	public void test15() {
+		final char[] value = new char[2];
+		System.out.println(new String(value, 0, Character.toChars(0x10400, value, 0)));
+	}
+
+	@Test
+	public void test14() throws Exception {
+		System.out.println(String.valueOf(0x4e00));
+		System.out.println(Character.charCount(0x4e00));
+		System.out.println(String.valueOf((char) 0x4e00));
+		System.out.println(new String(Character.toChars(0x4e00)));
+	}
+
+	@Test
+	public void test13() throws Exception {
+		final String str = new String(Character.toChars(0x10400));
+		System.out.println(str);
+		System.out.println(str.length());
+		System.out.println(new String(Character.toChars(0x4E00)));
+		System.out.println(new String(Character.toChars(0x9FA5)));
+		final String str2 = new String(Character.toChars(0x10FFFF));
+		System.out.println(str2);
+		System.out.println(str2.length());
+	}
+
+	@Test
+	public void test12() throws Exception {
+		System.out.println(Character.toChars(0x10400));
+		System.out.println(Arrays.toString(Character.toChars(0x10400)));
+		System.out.println(Character.codePointAt("A", 0));
+		System.out.println("a".codePointAt(0));
+		System.out.println(Character.charCount(0x10FF00));
+		System.out.println(Character.charCount(0x10400));
+		System.out.println(Character.charCount(97));
+		System.out.println("abcde".offsetByCodePoints(1, 2));
+	}
+
+	@Test
+	public void test11() throws ParseException {
+		Stream.of("1", "0", "a", "b", "c", "d", "e", "6", "5", "7").sorted(new RuleBasedCollator("<e<d<b<a<c")).forEach(System.out::println);
+	}
 
 	@Test
 	public void test10() {
