@@ -1,5 +1,6 @@
 package com.flyingh.i18n.demo;
 
+import java.text.BreakIterator;
 import java.text.ChoiceFormat;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
@@ -19,9 +20,114 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class I18nDemo {
+
+	@Test
+	public void test25() throws Exception {
+		final String text = "She said, \"Hello there,\" and then " + "went on down the street. When she stopped "
+				+ "to look at the fur coats in a shop + " + "window, her dog growled. \"Sorry Jake,\" " + "she said. \"I didn't know you would take "
+				+ "it personally.\"";
+		final BreakIterator lineInstance = BreakIterator.getLineInstance();
+		lineInstance.setText(text);
+		final int MAX_LENGTH = 30;
+		int lineLength = 0;
+		for (int start = lineInstance.first(), end = lineInstance.next(); end != BreakIterator.DONE; start = end, end = lineInstance.next()) {
+			if ((lineLength += end - start) >= MAX_LENGTH) {
+				System.out.println();
+				lineLength = end - start;
+			}
+			System.out.print(text.substring(start, end));
+		}
+
+	}
+
+	@Test
+	public void test24() throws Exception {
+		final BreakIterator wordInstance = BreakIterator.getWordInstance();
+		wordInstance.setText("hello world");
+		Assert.assertTrue(wordInstance.next() == 5);
+		Assert.assertTrue(wordInstance.first() == 0);
+		Assert.assertEquals(2, "𐐀".length());
+	}
+
+	@Test
+	public void test23() throws Exception {
+		final String str = "He's vanished!  What will we do?  It's up to us.";
+		final BreakIterator sentenceInstance = BreakIterator.getSentenceInstance();
+		sentenceInstance.setText(str);
+		int end = sentenceInstance.first();
+		final StringBuilder builder = new StringBuilder(new String(new char[str.length() + 1]));
+		while (end != BreakIterator.DONE) {
+			builder.setCharAt(end, '^');
+			end = sentenceInstance.next();
+		}
+		System.out.println(str);
+		System.out.println(builder);
+	}
+
+	@Test
+	public void test22() throws Exception {
+		final String str = "She stopped.  She said, \"Hello there,\" and then";
+		final BreakIterator wordInstance = BreakIterator.getWordInstance();
+		wordInstance.setText(str);
+		for (int start = wordInstance.first(), end = wordInstance.next(); end != BreakIterator.DONE; start = end, end = wordInstance.next()) {
+			final String substring = str.substring(start, end);
+			if (Character.isLetterOrDigit(substring.charAt(0))) {
+				System.out.println(substring);
+			}
+		}
+	}
+
+	@Test
+	public void test21() throws Exception {
+		final String str = "She stopped.  She said, \"Hello there,\" and then";
+		final BreakIterator wordInstance = BreakIterator.getWordInstance();
+		wordInstance.setText(str);
+		int end = wordInstance.first();
+		final StringBuilder builder = new StringBuilder(new String(new char[str.length() + 1]));
+		while (end != BreakIterator.DONE) {
+			builder.setCharAt(end, '^');
+			end = wordInstance.next();
+		}
+		System.out.println(str);
+		System.out.println(builder);
+	}
+
+	@Test
+	public void test20() {
+		final String house = "\u0628" + "\u064e" + "\u064a" + "\u0652" + "\u067a" + "\u064f";
+		final BreakIterator characterInstance = BreakIterator.getCharacterInstance(Locale.forLanguageTag("ar_SA"));
+		characterInstance.setText(house);
+		int end = characterInstance.first();
+		while (end != BreakIterator.DONE) {
+			System.out.println(end);
+			end = characterInstance.next();
+		}
+	}
+
+	@Test
+	public void test19() {
+		System.out.println(String.valueOf('\u00fc'));
+	}
+
+	@Test
+	public void test18() {
+		final String str = "Hello world! Today is Sunday!!!";
+		final BreakIterator wordInstance = BreakIterator.getWordInstance();
+		wordInstance.setText(str);
+		for (int start = wordInstance.first(), end = wordInstance.next(); end != BreakIterator.DONE; start = end, end = wordInstance.next()) {
+			System.out.format("start:%d,end:%d%n", start, end);
+			System.out.println(str.substring(start, end));
+		}
+	}
+
+	@Test
+	public void test17() {
+		Stream.of(BreakIterator.getAvailableLocales()).forEach(System.out::println);
+	}
 
 	@Test
 	public void test16() {
@@ -78,8 +184,10 @@ public class I18nDemo {
 		final Locale locale = Locale.US;
 		final ResourceBundle bundle = ResourceBundle.getBundle("book", locale);
 		final MessageFormat messageFormat = new MessageFormat(bundle.getString("pattern"), locale);
-		messageFormat.setFormats(new Format[] { null,
-				newChoiceFormat(new double[] { 0, 1, 2 }, new String[] { bundle.getString("noBooks"), bundle.getString("oneBook"), bundle.getString("multipleBooks") }),
+		messageFormat.setFormats(new Format[] {
+				null,
+				newChoiceFormat(new double[] { 0, 1, 2 },
+						new String[] { bundle.getString("noBooks"), bundle.getString("oneBook"), bundle.getString("multipleBooks") }),
 				NumberFormat.getInstance() });
 		final String name = bundle.getString("name");
 		System.out.println(format(messageFormat, name, 0));
@@ -172,18 +280,21 @@ public class I18nDemo {
 	public void test4() throws Exception {
 		final String ranges = "zh-CN;q=1.0,en-GB;q=0.5,en-US;q=0.8,zh-TW;q=0.0";
 		final String[] tags = { "en-GB", "zh-CN", "ja-JP", "zh-TW", "en-US" };
-		Locale.filter(LanguageRange.parse(ranges), Stream.of(tags).map(str -> Locale.forLanguageTag(str)).collect(Collectors.toList())).forEach(System.out::println);
+		Locale.filter(LanguageRange.parse(ranges), Stream.of(tags).map(str -> Locale.forLanguageTag(str)).collect(Collectors.toList())).forEach(
+				System.out::println);
 		System.out.println("****************");
 		Locale.filterTags(LanguageRange.parse(ranges), Arrays.asList(tags)).forEach(System.out::println);
 		System.out.println("#########################");
-		System.out.println(Locale.lookup(LanguageRange.parse(ranges), Stream.of(tags).map(str -> Locale.forLanguageTag(str)).collect(Collectors.toList())));
+		System.out.println(Locale.lookup(LanguageRange.parse(ranges),
+				Stream.of(tags).map(str -> Locale.forLanguageTag(str)).collect(Collectors.toList())));
 		System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%");
 		System.out.println(Locale.lookupTag(LanguageRange.parse(ranges), Stream.of(tags).collect(Collectors.toList())));
 	}
 
 	@Test
 	public void test3() throws Exception {
-		LanguageRange.parse("zh-CN;q=1.0,en-US;q=0.8,en-GB;q=0.5,jp-JP;q=0.0").stream().map(lr -> lr.getRange() + "-----" + lr.getWeight()).forEach(System.out::println);
+		LanguageRange.parse("zh-CN;q=1.0,en-US;q=0.8,en-GB;q=0.5,jp-JP;q=0.0").stream().map(lr -> lr.getRange() + "-----" + lr.getWeight())
+				.forEach(System.out::println);
 	}
 
 	@Test
