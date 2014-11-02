@@ -1,5 +1,10 @@
 package com.flyingh.i18n.demo;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.IDN;
+import java.security.NoSuchAlgorithmException;
 import java.text.BreakIterator;
 import java.text.ChoiceFormat;
 import java.text.DateFormat;
@@ -24,6 +29,27 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class I18nDemo {
+	@Test
+	public void test28() throws Exception {
+		System.out.println(IDN.toASCII("清华大学"));
+		System.out.println(IDN.toUnicode("xn--xkry9kk1bz66a"));
+	}
+
+	@Test
+	public void test27() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+		final String str = "A" + "\u00ea" + "\u00f1" + "\u00fc" + "C";
+		System.out.println(str);
+		final byte[] bytes = str.getBytes("UTF8");
+		for (final byte b : bytes) {
+			System.out.format("0x%02x%n", b);
+		}
+	}
+
+	@Test
+	public void test26() throws Exception {
+		System.out.println(new OutputStreamWriter(new ByteArrayOutputStream()).getEncoding());
+		System.out.println(System.getProperty("file.encoding"));
+	}
 
 	@Test
 	public void test25() throws Exception {
@@ -188,7 +214,7 @@ public class I18nDemo {
 				null,
 				newChoiceFormat(new double[] { 0, 1, 2 },
 						new String[] { bundle.getString("noBooks"), bundle.getString("oneBook"), bundle.getString("multipleBooks") }),
-				NumberFormat.getInstance() });
+						NumberFormat.getInstance() });
 		final String name = bundle.getString("name");
 		System.out.println(format(messageFormat, name, 0));
 		System.out.println(format(messageFormat, name, 1));
@@ -294,7 +320,7 @@ public class I18nDemo {
 	@Test
 	public void test3() throws Exception {
 		LanguageRange.parse("zh-CN;q=1.0,en-US;q=0.8,en-GB;q=0.5,jp-JP;q=0.0").stream().map(lr -> lr.getRange() + "-----" + lr.getWeight())
-				.forEach(System.out::println);
+		.forEach(System.out::println);
 	}
 
 	@Test
